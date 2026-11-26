@@ -26,10 +26,11 @@ node --test tests/
 
 ## 배포
 
-`public/` 폴더만 올립니다. `tests/`는 배포하지 않습니다.
+Cloudflare Workers(정적 자산)로 배포합니다. `wrangler.jsonc`가 `public/` 폴더만 서비스하도록 지정하므로 `tests/`는 배포되지 않습니다.
 
-- Cloudflare Pages: 새 프로젝트 → 직접 업로드 → `public` 폴더 선택 (빌드 명령 없음)
-- GitHub Pages: 저장소에 올린 뒤 Pages 소스를 `public`이 있는 브랜치/폴더로 지정
+- GitHub `main`에 push하면 Cloudflare가 자동 배포 (Workers & Pages → Git 연결)
+- 연결 설정: Path `/`(저장소 루트), Build command 비움, Deploy command `npx wrangler deploy`
+- 로컬에서 설정 확인: `npx wrangler deploy --dry-run`
 
 ## 개인용 → 배포용 반영 절차
 

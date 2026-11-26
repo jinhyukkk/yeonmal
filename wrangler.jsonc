@@ -1,0 +1,8 @@
+// Cloudflare Workers 정적 사이트 설정: 서버 코드 없이 public/ 폴더만 그대로 서비스
+{
+  "name": "yeonmal",
+  "compatibility_date": "2026-11-26",
+  "assets": {
+    "directory": "./public"
+  }
+}
