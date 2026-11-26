@@ -286,3 +286,22 @@ test('추천 적용: changes를 입력에 반영하면 예상 절세만큼 세�
     const pension = recommendDeductions(inputs).find((i) => i.key === 'pensionCombo');
     assert.deepStrictEqual(pension.changes, { pensionAccount: 6000000, irpAccount: 3000000 });
 });
+
+test('카드 사용 가이드: 문턱·남은 한도를 결제수단별로 (만원 단위 올림)', () => {
+    const { cardUsageGuide } = require('../public/tax_logic.js');
+    const inputs = { ...base, taxYear: 2026, totalSalary: 50000000 };
+    // 문턱 1,250만 미달: 신용카드 500만 → 750만 남음, 이후 체크카드 1,000만(30%)이면 300만 한도
+    const g = cardUsageGuide({ ...inputs, creditCard: 5000000 });
+    assert.strictEqual(g.thresholdLeft, 7500000);
+    assert.strictEqual(g.debitRoom, 10000000);
+    assert.strictEqual(g.creditRoom, 20000000);
+    assert.strictEqual(g.maxDeduction, 3000000);
+    // 문턱 넘김: 신용카드 2,000만 → 공제 112.5만, 남은 187.5만 = 체크카드 625만 / 신용카드 1,250만
+    const h = cardUsageGuide({ ...inputs, creditCard: 20000000 });
+    assert.strictEqual(h.thresholdLeft, 0);
+    assert.strictEqual(h.deduction, 1125000);
+    assert.strictEqual(h.debitRoom, 6250000);
+    assert.strictEqual(h.creditRoom, 12500000);
+    // 기본한도 도달
+    assert.strictEqual(cardUsageGuide({ ...inputs, creditCard: 40000000 }).reached, true);
+});

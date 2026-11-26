@@ -653,4 +653,42 @@ function recommendDeductions(inputs) {
 }
 
 // Node 테스트용 export (브라우저에서는 무시)
-if (typeof module !== 'undefined') module.exports = { calculateTax, childCreditMinAge, recommendDeductions };
+/**
+ * 신용카드 등 사용 가이드: 남은 기간에 "어차피 쓸 돈"을 어떤 결제수단으로 낼지
+ * - thresholdLeft: 총급여 25%(최저사용액)까지 남은 금액. 이 구간은 공제가 없으니 혜택 좋은 신용카드가 유리
+ * - debitRoom / creditRoom: 문턱을 넘긴 뒤 공제가 더 늘지 않게 될 때까지 쓸 수 있는 금액 (만원 단위)
+ */
+function cardUsageGuide(inputs) {
+    const salary = Math.max(0, (inputs.totalSalary || 0) - (inputs.nonTaxableIncome || 0));
+    const threshold = Math.floor(salary * 0.25);
+    const used = ['creditCard', 'debitCard', 'publicTransport', 'traditionalMarket', 'booksPerformance']
+        .reduce((a, k) => a + (inputs[k] || 0), 0);
+    const thresholdLeft = Math.max(0, threshold - used);
+    const deductionOf = (over) => calculateTax({ ...inputs, ...over }).limitInfo.creditCard.deduction;
+    const deduction = deductionOf({});
+
+    // 문턱까지는 신용카드로 쓴다고 보고, 그 뒤 결제수단별로 공제가 멈추는 지점을 찾음
+    const base = { ...inputs, creditCard: (inputs.creditCard || 0) + thresholdLeft };
+    const roomFor = (key) => {
+        const at = (x) => deductionOf({ ...base, [key]: (base[key] || 0) + x });
+        const max = at(1e10); // 이 결제수단으로 더 써서 도달할 수 있는 최대 공제액
+        let lo = 0, hi = 1e6; // 만원 단위, 최대 100억
+        while (lo < hi) {
+            const mid = Math.floor((lo + hi) / 2);
+            if (at(mid * 10000) >= max) hi = mid; else lo = mid + 1;
+        }
+        return { room: lo * 10000, max };
+    };
+    const debit = roomFor('debitCard');
+    const credit = roomFor('creditCard');
+    return {
+        threshold, used, thresholdLeft, deduction,
+        maxDeduction: Math.max(debit.max, credit.max),
+        debitRoom: debit.room,
+        creditRoom: credit.room,
+        // 기본한도 도달: 더 써도 공제가 늘지 않음 (대중교통·전통시장 추가한도는 cardExtra 추천에서 안내)
+        reached: thresholdLeft === 0 && debit.room === 0,
+    };
+}
+
+if (typeof module !== 'undefined') module.exports = { calculateTax, childCreditMinAge, recommendDeductions, cardUsageGuide };

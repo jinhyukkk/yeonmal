@@ -746,3 +746,17 @@ summary:hover { text-decoration: underline; }
     font-size: 0.85rem;
     font-weight: 600;
 }
+
+/* 신용카드 등 사용 가이드 */
+.card-guide {
+    margin: 12px 0;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    font-size: 0.85rem;
+}
+.card-guide h4 { font-size: 0.9rem; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 8px; }
+.card-guide h4 span { font-weight: 500; color: var(--text-secondary); }
+.card-guide p { margin: 2px 0; }
+.card-guide .card-guide-note { color: var(--text-secondary); font-size: 0.75rem; margin-top: 4px; }

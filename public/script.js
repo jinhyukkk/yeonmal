@@ -111,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             top.appendChild(li);
         }
+        renderCardGuide(inputs);
         if (!actionable.length) {
             const li = document.createElement('li');
             li.textContent = result.determinedTax === 0 ? '결정세액이 이미 0원이라 더 줄일 세금이 없습니다.' : '지금 추가로 채울 수 있는 항목이 없습니다.';
@@ -151,6 +152,37 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     // 기록을 불러오면 이전 적용 내역은 의미가 없으므로 비움 (manage.js fillForm에서 호출)
     window.resetApplied = () => { applied.length = 0; renderApplied(); };
+
+    // 신용카드 등 사용 가이드: 남은 기간에 어차피 쓸 돈을 어떤 결제수단으로 낼지
+    const renderCardGuide = (inputs) => {
+        const box = document.getElementById('cardGuide');
+        const g = cardUsageGuide(inputs);
+        box.replaceChildren();
+        box.hidden = g.threshold === 0;
+        if (box.hidden) return;
+        const line = (text, cls) => {
+            const p = document.createElement('p');
+            p.textContent = text;
+            if (cls) p.className = cls;
+            box.append(p);
+        };
+        const head = document.createElement('h4');
+        head.textContent = '신용카드 등 사용 가이드';
+        const stat = document.createElement('span');
+        stat.textContent = `공제 ${formatNumber(g.deduction)} / 최대 ${formatNumber(g.maxDeduction)}`;
+        head.append(' ', stat);
+        box.append(head);
+        if (g.thresholdLeft > 0) {
+            line(`① 총급여 25%(${toMan(g.threshold)})까지 ${formatNumber(g.thresholdLeft)}원 남음 → 이 구간은 공제 없음, 혜택 좋은 신용카드로`);
+            line(`② 그다음 체크카드·현금영수증 ${toMan(g.debitRoom)}까지 공제 증가 (신용카드면 ${toMan(g.creditRoom)})`);
+        } else if (g.reached) {
+            line('기본한도 도달 → 남은 기간은 혜택 좋은 신용카드로. 대중교통·전통시장은 추가한도로 계속 공제');
+        } else {
+            line(`체크카드·현금영수증으로 ${toMan(g.debitRoom)} 더 쓰면 한도 도달 (신용카드면 ${toMan(g.creditRoom)})`);
+            line('그 이후 지출은 신용카드 혜택 위주로');
+        }
+        line('새로 소비하라는 뜻이 아니라, 어차피 쓸 돈의 결제수단 배분입니다.', 'card-guide-note');
+    };
 
     // 추천 요약용 짧은 이름 (전체 이름은 전체 표·툴팁에)
     const SHORT_TITLE = {
