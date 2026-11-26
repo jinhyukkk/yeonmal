@@ -1,0 +1,17 @@
+# 의존성·도구 산출물
+node_modules/
+.wrangler/
+
+# 개인 데이터는 이 저장소에 두지 않음 (혹시 복사돼도 올라가지 않게)
+data/
+*.pdf
+*.xlsx
+*.xls
+*.csv
+
+# OS·편집기
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
