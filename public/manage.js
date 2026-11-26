@@ -45,6 +45,7 @@ const ID_OF = { isMarried2024_2026: 'marriage2024_2026' };
 function fillForm(inputs) {
     window.resetApplied?.();
     for (const [key, value] of Object.entries(inputs)) {
+        if (key === 'taxYear') continue; // 배포용은 2026년 귀속 고정이라 기록의 연도로 바꾸지 않음
         const el = document.getElementById(ID_OF[key] || key);
         if (!el) continue;
         if (el.type === 'checkbox') el.checked = !!value; else window.setAmount(el, value);

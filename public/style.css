@@ -736,3 +736,13 @@ summary:hover { text-decoration: underline; }
     color: var(--text-secondary);
 }
 .site-footer p { margin-bottom: 6px; }
+
+/* 귀속연도 고정 표시 */
+.year-badge {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: var(--primary-color);
+    font-size: 0.85rem;
+    font-weight: 600;
+}

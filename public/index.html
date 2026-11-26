@@ -6,17 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>연말정산 계산기</title>
     <link rel="stylesheet" href="style.css">
-    <meta name="description" content="2025·2026년 귀속 연말정산 예상 환급액 계산기. 공제 추천, 급여 엑셀·홈택스 미리보기 붙여넣기 지원. 입력값은 서버로 전송되지 않습니다.">
+    <meta name="description" content="2026년 귀속 연말정산 예상 환급액 계산기. 공제 추천, 급여 엑셀·홈택스 미리보기 붙여넣기 지원. 입력값은 서버로 전송되지 않습니다.">
 </head>
 
 <body>
     <div class="container">
         <header class="topbar">
             <h1>연말정산 계산기</h1>
-            <select id="taxYear" aria-label="귀속연도">
-                <option value="2025">2025년 귀속 (2026년 1월 정산)</option>
-                <option value="2026">2026년 귀속 (2027년 1월 정산)</option>
+            <!-- 배포용은 2026년 귀속 고정. 스크립트가 taxYear 값을 읽으므로 선택 상자는 숨겨 두고 안내만 표시 -->
+            <select id="taxYear" aria-label="귀속연도" hidden>
+                <option value="2026" selected>2026년 귀속 (2027년 1월 정산)</option>
             </select>
+            <span class="year-badge">2026년 귀속 · 2027년 1월 정산</span>
             <span class="spacer"></span>
             <button type="button" id="openPasteBtn" class="secondary-btn">붙여넣기로 채우기</button>
             <button type="button" id="openRecordsBtn" class="secondary-btn">기록 불러오기</button>
