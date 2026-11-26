@@ -760,3 +760,4 @@ summary:hover { text-decoration: underline; }
 .card-guide h4 span { font-weight: 500; color: var(--text-secondary); }
 .card-guide p { margin: 2px 0; }
 .card-guide .card-guide-note { color: var(--text-secondary); font-size: 0.75rem; margin-top: 4px; }
+.card-guide .card-guide-warn { color: #b45309; font-weight: 600; }

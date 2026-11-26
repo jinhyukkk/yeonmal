@@ -681,7 +681,15 @@ function cardUsageGuide(inputs) {
     };
     const debit = roomFor('debitCard');
     const credit = roomFor('creditCard');
+
+    // 실수령액 대비 카드 등 지출 비율(%). 실수령액 = 총급여 − 4대보험 − 결정세액(소득세+지방소득세)
+    // shortcut: 계좌이체·현금 지출과 근로소득 외 소득은 모름, 가계부 연동이 생기면 그 값으로 교체
+    const tax = calculateTax(inputs);
+    const takeHome = (inputs.totalSalary || 0) - (inputs.nationalPension || 0) - (inputs.healthInsurance || 0)
+        - (inputs.employmentInsurance || 0) - tax.determinedTax - tax.localDeterminedTax;
     return {
+        takeHome,
+        spendRatio: takeHome > 0 ? Math.round(used / takeHome * 100) : null,
         threshold, used, thresholdLeft, deduction,
         maxDeduction: Math.max(debit.max, credit.max),
         debitRoom: debit.room,

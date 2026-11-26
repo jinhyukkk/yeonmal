@@ -303,5 +303,12 @@ test('카드 사용 가이드: 문턱·남은 한도를 결제수단별로 (만�
     assert.strictEqual(h.debitRoom, 6250000);
     assert.strictEqual(h.creditRoom, 12500000);
     // 기본한도 도달
-    assert.strictEqual(cardUsageGuide({ ...inputs, creditCard: 40000000 }).reached, true);
+    const over = cardUsageGuide({ ...inputs, creditCard: 40000000 });
+    assert.strictEqual(over.reached, true);
+    // 실수령액 대비 지출 비율: 4,000만 ÷ (5,000만 − 결정세액) → 100% 초과
+    const { calculateTax } = require('../public/tax_logic.js');
+    const t = calculateTax({ ...inputs, creditCard: 40000000 });
+    assert.strictEqual(over.takeHome, 50000000 - t.determinedTax - t.localDeterminedTax);
+    assert.strictEqual(over.spendRatio, Math.round(40000000 / over.takeHome * 100));
+    assert.strictEqual(cardUsageGuide({ ...inputs, totalSalary: 0 }).spendRatio, null);
 });

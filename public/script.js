@@ -182,7 +182,18 @@ document.addEventListener('DOMContentLoaded', () => {
             line(`체크카드·현금영수증으로 ${toMan(g.debitRoom)} 더 쓰면 한도 도달 (신용카드면 ${toMan(g.creditRoom)})`);
             line('그 이후 지출은 신용카드 혜택 위주로');
         }
-        line('새로 소비하라는 뜻이 아니라, 어차피 쓸 돈의 결제수단 배분입니다.', 'card-guide-note');
+        if (g.spendRatio !== null) {
+            const r = g.spendRatio;
+            // 100% 초과는 넘친 정도에 따라 점점 세게 (재계산마다 바뀌지 않도록 랜덤 대신 구간)
+            const [msg, cls] = r > 150 ? ['🚨 카드가 비명을 지르고 있어요! 지금 당장 지갑 압수! 🔒', 'card-guide-warn']
+                : r > 120 ? ['🔥 통장이 불타고 있어요! 진정하고 카드 내려놓으세요 🧯', 'card-guide-warn']
+                : r > 100 ? ['🙈 못 본 척하고 싶지만… 월급보다 더 썼어요. 이제 멈추세요!', 'card-guide-warn']
+                : r > 70 ? ['💸 지갑이 쉴 틈이 없네요. 브레이크 살짝 밟아볼까요?', 'card-guide-warn']
+                : r > 50 ? ['🙂 적당히 잘 쓰고 계세요. 딱 좋아요', '']
+                : ['😎 저축 요정 등장! 이대로만 가요', ''];
+            line(`실수령액 대비 카드 지출 ${r}% — ${msg}`, cls);
+        }
+        line('새로 소비하라는 뜻이 아니라, 어차피 쓸 돈의 결제수단 배분입니다. 지출 비율엔 계좌이체·현금이 빠져 있어요.', 'card-guide-note');
     };
 
     // 추천 요약용 짧은 이름 (전체 이름은 전체 표·툴팁에)
