@@ -156,6 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 신용카드 등 사용 가이드: 남은 기간에 어차피 쓸 돈을 어떤 결제수단으로 낼지
     const renderCardGuide = (inputs) => {
         const box = document.getElementById('cardGuide');
+        if (!box) return; // 캐시된 예전 HTML에는 자리가 없으므로 건너뜀 (계산은 계속)
         const g = cardUsageGuide(inputs);
         box.replaceChildren();
         box.hidden = g.threshold === 0;
